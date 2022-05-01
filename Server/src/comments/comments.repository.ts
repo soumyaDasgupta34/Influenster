@@ -46,7 +46,10 @@ export const findCommetsByUserId = async (
 ): Promise<Array<IComment>> =>
   CommentModel.find({ user: userId }).sort({ createdAt: -1 });
 
-export const avatarChange = async (commentId: string, avatar: string) =>
+export const avatarChange = async (
+  commentId: string,
+  avatar: string,
+): Promise<IComment> =>
   CommentModel.findByIdAndUpdate({ _id: commentId }, { avatar });
 
 export default CommentModel;

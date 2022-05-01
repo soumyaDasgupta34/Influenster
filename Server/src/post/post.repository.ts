@@ -80,7 +80,9 @@ export const deleteComment = async (postId: string, commentId: string) =>
     { $pull: { comments: commentId } },
   );
 
-export const avatarChange = async (postId: string, avatar: string) =>
-  PostModel.findByIdAndUpdate({ _id: postId }, { avatar });
+export const avatarChange = async (
+  postId: string,
+  avatar: string,
+): Promise<IPost> => PostModel.findByIdAndUpdate({ _id: postId }, { avatar });
 
 export default PostModel;

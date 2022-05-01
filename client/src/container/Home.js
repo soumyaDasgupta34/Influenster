@@ -16,6 +16,8 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import Typography from "@mui/material/Typography";
 import SearchBar from "../components/SearchBar";
 import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import { Input } from "@mui/material";
 
 const Home = () => {
   const { isLoading, data, likeChange, postChange } = useSelector(
@@ -25,11 +27,19 @@ const Home = () => {
   const [name, setName] = useState("");
   const [selectedFile, setSelectedFile] = useState();
   const [open, setOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
+  useEffect(() => {
+    if (selectedFile) {
+      setImageUrl(URL.createObjectURL(selectedFile));
+    }
+  }, [selectedFile]);
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+    setSelectedFile();
+    setName("");
   };
   const handleUpload = () => {
     dispatch(createPost(name, selectedFile));
@@ -67,22 +77,47 @@ const Home = () => {
             </Button>
           </div>
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Add Post</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Caption</DialogContentText>
-              <TextField
-                variant="standard"
-                label="Describe your post"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <Button variant="contained" component="label" color="primary">
+            {/* <DialogTitle>Add Post</DialogTitle> */}
+            <DialogContent sx={{ width: "500px" }}>
+              <Box padding=".5rem 0">
+                <Input
+                  multiline
+                  rows="2"
+                  disableUnderline
+                  type="text"
+                  placeholder="What's happening?"
+                  sx={{ width: "100%" }}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                {imageUrl && selectedFile && (
+                  <Box mt={2} textAlign="center">
+                    <div>Image Preview:</div>
+                    <img
+                      src={imageUrl}
+                      alt={selectedFile.name}
+                      height="200px"
+                      width="300px"
+                    />
+                  </Box>
+                )}
+              </Box>
+              <Button
+                variant="contained"
+                component="label"
+                color="primary"
+                sx={{ marginTop: "20px", marginLeft: "9rem" }}
+              >
                 {" "}
-                <AddAPhotoIcon fontSize="small" />{" "}
+                <AddAPhotoIcon sx={{ fontSize: "18px" }} />{" "}
                 <Typography
                   variant="h7"
-                  style={{ textTransform: "none", marginRight: "5px" }}
+                  style={{
+                    textTransform: "none",
+                    marginRight: "5px",
+                    marginLeft: "10px",
+                    marginTop: "5px",
+                  }}
                 >
                   Upload a file
                 </Typography>
@@ -95,7 +130,14 @@ const Home = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleUpload}>Upload</Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleUpload}
+                disabled={name.length === 0}
+              >
+                Post
+              </Button>
             </DialogActions>
           </Dialog>
           <div>
