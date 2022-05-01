@@ -68,13 +68,19 @@ export const unlikePost = async (
 ): Promise<IPost> =>
   PostModel.findByIdAndUpdate(postId, { $pull: { likes: userId } });
 
-export const addComment = async (postId: string, newComment: IComment) =>
+export const addComment = async (
+  postId: string,
+  newComment: IComment,
+): Promise<IPost> =>
   PostModel.findByIdAndUpdate(
     { _id: postId },
     { $addToSet: { comments: newComment } },
   );
 
-export const deleteComment = async (postId: string, commentId: string) =>
+export const deleteComment = async (
+  postId: string,
+  commentId: string,
+): Promise<IPost> =>
   PostModel.findByIdAndUpdate(
     { _id: postId },
     { $pull: { comments: commentId } },
