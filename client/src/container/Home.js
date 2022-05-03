@@ -64,6 +64,7 @@ const Home = () => {
               variant="contained"
               component="label"
               color="primary"
+              data-testid="add-post"
               onClick={handleClickOpen}
             >
               {" "}
@@ -76,7 +77,11 @@ const Home = () => {
               </Typography>
             </Button>
           </div>
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            data-testid="add-post-modal"
+          >
             {/* <DialogTitle>Add Post</DialogTitle> */}
             <DialogContent sx={{ width: "500px" }}>
               <Box padding=".5rem 0">
@@ -129,12 +134,15 @@ const Home = () => {
               </Button>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleClose} data-testid="cancel-button">
+                Cancel
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleUpload}
                 disabled={name.length === 0}
+                data-testid="post-button"
               >
                 Post
               </Button>

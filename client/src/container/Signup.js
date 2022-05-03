@@ -102,6 +102,7 @@ const Signup = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              data-testid="sign-up-button"
             >
               Sign Up
             </Button>
