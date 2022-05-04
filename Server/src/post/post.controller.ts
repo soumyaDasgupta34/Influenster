@@ -47,8 +47,11 @@ export const getPostById = catchAsync(async (req: Request, res: Response) => {
 
 export const getPostsByUserId = catchAsync(
   async (req: Request, res: Response) => {
+    const page: number = Number(req.query.page) || 1;
+    const skip: number = (page - 1) * 10;
     const postsArray: Array<IPost> = await postService.getPostsByUserId(
       req.params.id,
+      skip,
     );
     return res.status(200).json({
       status: 'success',

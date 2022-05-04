@@ -45,13 +45,17 @@ export const getAllPosts = async (
 ): Promise<Array<IPost>> =>
   PostModel.find({ user: { $in: following } })
     .sort({ createdAt: -1 })
-    .skip(skip);
+    .skip(skip)
+    .limit(10);
 
 export const getPostById = async (id: string): Promise<IPost> =>
   PostModel.findById(id);
 
-export const getPostsByUserId = async (id: string): Promise<Array<IPost>> =>
-  PostModel.find({ user: id }).sort({ createdAt: -1 });
+export const getPostsByUserId = async (
+  id: string,
+  skip: number,
+): Promise<Array<IPost>> =>
+  PostModel.find({ user: id }).sort({ createdAt: -1 }).skip(skip).limit(10);
 
 export const deletePost = async (id: string): Promise<any> =>
   PostModel.findByIdAndDelete({ _id: id });

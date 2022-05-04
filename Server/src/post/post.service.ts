@@ -19,8 +19,10 @@ export const getAllPosts = async (following, skip): Promise<Array<IPost>> =>
 export const getPostById = async (id: string): Promise<IPost> =>
   postDb.getPostById(id);
 
-export const getPostsByUserId = async (userId: string): Promise<Array<IPost>> =>
-  postDb.getPostsByUserId(userId);
+export const getPostsByUserId = async (
+  userId: string,
+  skip: number,
+): Promise<Array<IPost>> => postDb.getPostsByUserId(userId, skip);
 
 export const deletePost = async (
   postId: string,
