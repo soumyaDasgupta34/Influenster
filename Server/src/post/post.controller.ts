@@ -25,10 +25,12 @@ export const addPost = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getAllPosts = catchAsync(async (req: Request, res: Response) => {
-  const posts = await postService.getAllPosts([
-    ...req.user.following,
-    req.user._id,
-  ]);
+  const page: number = Number(req.query.page) || 1;
+  const skip: number = (page - 1) * 10;
+  const posts = await postService.getAllPosts(
+    [...req.user.following, req.user._id],
+    skip,
+  );
   return res.status(200).json({
     status: 'success',
     data: posts,

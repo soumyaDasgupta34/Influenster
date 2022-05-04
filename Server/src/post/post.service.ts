@@ -13,8 +13,8 @@ export const addPost = async (userId: string, postData: IPost) => {
   return userDb.saveUser(user);
 };
 
-export const getAllPosts = async (following): Promise<Array<IPost>> =>
-  postDb.getAllPosts(following);
+export const getAllPosts = async (following, skip): Promise<Array<IPost>> =>
+  postDb.getAllPosts(following, skip);
 
 export const getPostById = async (id: string): Promise<IPost> =>
   postDb.getPostById(id);

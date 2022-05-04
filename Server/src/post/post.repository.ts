@@ -41,8 +41,11 @@ export const savePost = async (postData: IPost): Promise<IPost> =>
 
 export const getAllPosts = async (
   following: Array<string>,
+  skip: number,
 ): Promise<Array<IPost>> =>
-  PostModel.find({ user: { $in: following } }).sort({ createdAt: -1 });
+  PostModel.find({ user: { $in: following } })
+    .sort({ createdAt: -1 })
+    .skip(skip);
 
 export const getPostById = async (id: string): Promise<IPost> =>
   PostModel.findById(id);
