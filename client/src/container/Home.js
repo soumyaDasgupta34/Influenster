@@ -7,8 +7,6 @@ import Post from "../components/Post";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { createPost } from "../redux/slices/postSlice";
 import Button from "@mui/material/Button";
 import InfiniteScroll from "react-infinite-scroll-component";
