@@ -9,6 +9,7 @@ const initialState = {
   likeChange: true,
   commentChange: true,
   postChange: true,
+  hasMore: true,
 };
 
 const postSlice = createSlice({
@@ -37,6 +38,13 @@ const postSlice = createSlice({
     createPostAction: (state) => {
       state.postChange = !state.postChange;
     },
+    getMorePostsAction: (state, action) => {
+      state.data = [...state.data, ...action.payload];
+      console.log(action.payload);
+      if (!action.payload.length > 0) {
+        state.hasMore = false;
+      }
+    },
   },
 });
 
@@ -62,6 +70,32 @@ export const getPosts = () => {
     };
     const data = await sendRequest();
     dispatch(updateFeed(data));
+  };
+};
+
+export const getMorePosts = (pageNumber) => {
+  return async (dispatch) => {
+    const sendRequest = async () => {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/post/getAllPost?page=${pageNumber}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Accept: "application/json",
+          },
+        }
+      );
+      const responseJson = await response.json();
+      //   console.log(response.status);
+      if (response.status === 401) {
+        dispatch(logout());
+      }
+      return responseJson.data;
+    };
+    const data = await sendRequest();
+    console.log("More data", data);
+    dispatch(getMorePostsAction(data));
   };
 };
 
@@ -254,5 +288,6 @@ export const {
   likePostAction,
   commentChangeAction,
   createPostAction,
+  getMorePostsAction,
 } = actions;
 export default reducer;

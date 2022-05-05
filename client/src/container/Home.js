@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Spinner from "../components/Spinner";
 import { useEffect, useState } from "react";
-import { getPosts } from "../redux/slices/postSlice";
+import { getPosts, getMorePosts } from "../redux/slices/postSlice";
 import Post from "../components/Post";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -11,23 +11,26 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { createPost } from "../redux/slices/postSlice";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import InfiniteScroll from "react-infinite-scroll-component";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import Typography from "@mui/material/Typography";
 import SearchBar from "../components/SearchBar";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Input } from "@mui/material";
+import { logInApi } from "../api/apiCalls";
 
 const Home = () => {
-  const { isLoading, data, likeChange, postChange } = useSelector(
+  const { isLoading, data, likeChange, postChange, hasMore } = useSelector(
     (state) => state.post
   );
+
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [selectedFile, setSelectedFile] = useState();
   const [open, setOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
   useEffect(() => {
     if (selectedFile) {
       setImageUrl(URL.createObjectURL(selectedFile));
@@ -48,6 +51,11 @@ const Home = () => {
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch, likeChange, postChange]);
+
+  const fetchData = () => {
+    dispatch(getMorePosts(pageNumber + 1));
+    setPageNumber(pageNumber + 1);
+  };
   return (
     <div>
       {isLoading ? (
@@ -148,9 +156,18 @@ const Home = () => {
               </Button>
             </DialogActions>
           </Dialog>
-          <div>
+          <InfiniteScroll
+            dataLength={data.length}
+            next={fetchData}
+            hasMore={hasMore}
+            endMessage={
+              <p style={{ textAlign: "center" }}>
+                <b>Yay! You have seen it all</b>
+              </p>
+            }
+          >
             {data && data.map((post) => <Post key={post._id} data={post} />)}
-          </div>
+          </InfiniteScroll>
         </Grid>
       )}
     </div>

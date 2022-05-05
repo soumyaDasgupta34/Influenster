@@ -77,7 +77,7 @@ export const changeAvatar = async (
   id: string,
   avatar: string,
 ): Promise<IUser> => {
-  const posts = await postDb.getPostsByUserId(id);
+  const posts = await postDb.getPostsByUserId(id, 0);
   for (let i = 0; i < posts.length; i += 1) {
     await postDb.avatarChange(posts[i]._id.toString(), avatar);
   }
