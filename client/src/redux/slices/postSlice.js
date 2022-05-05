@@ -1,5 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { logout } from "./authSlice";
+import {
+  getPostApi,
+  getMorePostApi,
+  createPostApi,
+  likePostApi,
+  unlikePostApi,
+  getCommentsApi,
+  addCommentApi,
+  getUserPostApi,
+  deletePostApi,
+  deleteCommentApi,
+} from "../../api/postApiCalls";
 
 const initialState = {
   isLoading: true,
@@ -50,230 +62,78 @@ const postSlice = createSlice({
 
 export const getPosts = () => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/post/getAllPost",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      //   console.log(response.status);
-      if (response.status === 401) {
-        dispatch(logout());
-      }
-      return responseJson.data;
-    };
-    const data = await sendRequest();
-    dispatch(updateFeed(data));
+    const response = await getPostApi();
+    if (response.status === 401) {
+      dispatch(logout());
+    }
+    const responseJson = await response.json();
+    dispatch(updateFeed(responseJson.data));
   };
 };
 
 export const getMorePosts = (pageNumber) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/post/getAllPost?page=${pageNumber}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      //   console.log(response.status);
-      if (response.status === 401) {
-        dispatch(logout());
-      }
-      return responseJson.data;
-    };
-    const data = await sendRequest();
-    console.log("More data", data);
-    dispatch(getMorePostsAction(data));
+    const response = await getMorePostApi(pageNumber);
+    const responseJson = await response.json();
+    if (response.status === 401) {
+      dispatch(logout());
+    }
+    dispatch(getMorePostsAction(responseJson.data));
   };
 };
 
 export const createPost = (text, image) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const formData = new FormData();
-      formData.append("image", image);
-      formData.append("text", text);
-      const options = {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      };
-      const response = await fetch(
-        "http://localhost:8000/api/v1/post/addPost",
-        options
-      );
-      const responseJson = await response.json();
-      console.log(responseJson);
-      return responseJson;
-    };
-    await sendRequest();
+    await createPostApi(text, image);
     dispatch(createPostAction());
   };
 };
 
 export const likePost = (id) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch("http://localhost:8000/api/v1/post/like", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ id }),
-      });
-      const responseJson = await response.json();
-      console.log(responseJson);
-      return responseJson;
-    };
-    await sendRequest();
+    await likePostApi(id);
     dispatch(likePostAction());
   };
 };
 
 export const unlikePost = (id) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch("http://localhost:8000/api/v1/post/unlike", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ id }),
-      });
-      const responseJson = await response.json();
-      console.log(responseJson);
-      return responseJson;
-    };
-    await sendRequest();
+    await unlikePostApi(id);
     dispatch(likePostAction());
   };
 };
 
 export const getComments = (postId) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      console.log(postId);
-      const response = await fetch(
-        `http://localhost:8000/api/v1/comment/${postId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      return responseJson.data;
-    };
-    const comments = await sendRequest();
+    const comments = await getCommentsApi(postId);
     dispatch(showComments({ comments, postId }));
   };
 };
 
 export const addComment = (postId, content) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/comment/addComment",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ postId, content }),
-        }
-      );
-      const responseJson = await response.json();
-      console.log(responseJson);
-      return responseJson;
-    };
-    const response = await sendRequest();
-    console.log(response.data);
+    const response = await addCommentApi(postId, content);
     dispatch(newComment(response.data));
-    // dispatch(commentChangeAction());
   };
 };
 
 export const getUserPost = (userId) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/post/userId/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      return responseJson;
-    };
-    const response = await sendRequest();
+    const response = await getUserPostApi(userId);
     dispatch(findUserPosts(response.data));
   };
 };
 
 export const deletePost = (postId) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/post/${postId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      return responseJson;
-    };
-    await sendRequest();
+    await deletePostApi(postId);
     dispatch(createPostAction());
   };
 };
 
 export const deleteComment = (postId) => {
   return async (dispatch) => {
-    const sendRequest = async () => {
-      const response = await fetch(
-        `http://localhost:8000/api/v1/comment/${postId}/delete`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      const responseJson = await response.json();
-      return responseJson;
-    };
-    await sendRequest();
+    await deleteCommentApi(postId);
     dispatch(commentChangeAction());
   };
 };

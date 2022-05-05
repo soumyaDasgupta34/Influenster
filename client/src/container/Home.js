@@ -18,7 +18,6 @@ import SearchBar from "../components/SearchBar";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Input } from "@mui/material";
-import { logInApi } from "../api/apiCalls";
 
 const Home = () => {
   const { isLoading, data, likeChange, postChange, hasMore } = useSelector(
